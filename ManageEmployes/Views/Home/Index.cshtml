@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div>Manage employees salary</div>
+    </div>
+</div>
+
+<div class="form-inline my-2 my-lg-0" method="post">
+    <input id="txtemploteeid" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+    <button id="getEmployee" class="btn btn-outline-success my-2 my-sm-0" type="button">Search employe</button>   
+</div>
+
+<div id="employees" class="jumbotron">
+    <table class="table" id="tableEmpoyees">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>               
+                <th scope="col">Monthly Salary</th>
+                <th scope="col">hourly salary</th>
+                <th scope="col">salary Type</th>
+                <th scope="col">Annual salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#getEmployee").click(function () {
+            MaganeEmployee.Search();
+        });
+    });
+
+    var MaganeEmployee = {
+        Search: function () {
+            let employeeId = $("#txtemploteeid").val();
+            MaganeEmployee.SearchEmployeesApi(employeeId);
+        },
+
+        SearchEmployeesApi: function (id) {
+            const apiUrl = "http://localhost:52657/api/Employee/" + id;
+            
+            $.ajax({
+                url: apiUrl,
+                success: function (response) {                 
+                    MaganeEmployee.DrawResults(response);
+                },
+                error: function () {                    
+                }
+            });
+        },
+
+        DrawResults: function (result) {
+
+            $("#tableEmpoyees tbody").empty();
+
+            if (result.length > 0 && result[0] != null) {              
+
+                for (let i = 0; i <= result.length - 1; i++) {
+                    let row;
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td>" + result[i].id + "</td><td>" + result[i].name + "</td><td>"+ result[i].hourlySalary + "</td> <td>" + result[i].monthlySalary + "</td><td>" + result[i].contractTypeName + "</td> <td>" + result[i].annualsalary + "</td>";
+
+                    $("#tableEmpoyees tbody").append(row);
+                }
+            }
+        }
+    };
+
+</script>
